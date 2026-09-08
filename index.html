@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Meu Treino</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #10b981;
+            --accent-glow: rgba(16, 185, 129, 0.2);
+            --border: #334155;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            line-height: 1.5;
+            padding-bottom: 80px;
+        }
+
+        header {
+            padding: 24px 20px;
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 0.9) 100%);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .days-slider {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding: 16px 20px;
+            scrollbar-width: none; /* Firefox */
+        }
+        .days-slider::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        .day-tab {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .day-tab.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        main {
+            padding: 0 20px;
+        }
+
+        .day-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .day-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .workout-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 16px 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .exercise-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .exercise-card:active {
+            transform: scale(0.98);
+        }
+
+        .exercise-card.completed {
+            border-color: var(--accent);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .checkbox {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 2px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .exercise-card.completed .checkbox {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .checkbox svg {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.2s ease;
+        }
+
+        .exercise-card.completed .checkbox svg {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .exercise-info {
+            flex-grow: 1;
+        }
+
+        .exercise-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            transition: color 0.2s ease;
+        }
+
+        .exercise-card.completed .exercise-name {
+            color: var(--text-muted);
+            text-decoration: line-through;
+        }
+
+        .exercise-reps {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .muscle-badge {
+            display: inline-block;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+        }
+
+        .tip-card {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .tip-card svg {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            color: #3b82f6;
+        }
+
+        .tip-text {
+            font-size: 14px;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+
+        .progress-bar-container {
+            height: 4px;
+            background: var(--border);
+            width: 100%;
+            margin-top: 16px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .reset-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 32px;
+            margin-bottom: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .reset-btn:active {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <h1>Meu Treino</h1>
+        <div class="subtitle" id="date-display">Carregando...</div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+    </header>
+
+    <div class="days-slider" id="days-slider">
+        <!-- Tabs will be injected here -->
+    </div>
+
+    <main id="main-content">
+        <!-- Content will be injected here -->
+    </main>
+
+    <script>
+        const workoutData = [
+            {
+                "id": "segunda", "name": "Segunda", "type": "PUSH — Peito + Ombros + Tríceps",
+                "exercises": [
+                    { "id": "seg_1", "name": "Supino reto com barra/halteres", "reps": "4 séries x 10-12 reps", "muscle": "Peito" },
+                    { "id": "seg_2", "name": "Crucifixo no cabo (Evolution)", "reps": "4 séries x 12-15 reps", "muscle": "Peito" },
+                    { "id": "seg_3", "name": "Desenvolvimento ombros halteres", "reps": "4 séries x 10-12 reps", "muscle": "Ombro" },
+                    { "id": "seg_4", "name": "Elevação lateral cabo/halteres", "reps": "3 séries x 12-15 reps", "muscle": "Ombro" },
+                    { "id": "seg_5", "name": "Tríceps no pulley (corda/barra)", "reps": "4 séries x 12-15 reps", "muscle": "Tríceps" },
+                    { "id": "seg_6", "name": "Abdominal crunch no cabo", "reps": "3 séries x 15-20 reps", "muscle": "Core" }
+                ],
+                "tip": "Priorize o supino com energia máxima — é o exercício principal do dia."
+            },
+            {
+                "id": "terca", "name": "Terça", "type": "PULL — Costas + Bíceps",
+                "exercises": [
+                    { "id": "ter_1", "name": "Puxada frente na máquina", "reps": "4 séries x 10-12 reps", "muscle": "Costas" },
+                    { "id": "ter_2", "name": "Remada curvada barra/halteres", "reps": "4 séries x 10-12 reps", "muscle": "Costas" },
+                    { "id": "ter_3", "name": "Remada no cabo baixo", "reps": "3 séries x 12 reps", "muscle": "Costas" },
+                    { "id": "ter_4", "name": "Face pull no cabo", "reps": "3 séries x 15 reps", "muscle": "Ombro" },
+                    { "id": "ter_5", "name": "Rosca bíceps alternada", "reps": "4 séries x 12 reps", "muscle": "Bíceps" },
+                    { "id": "ter_6", "name": "Prancha frontal", "reps": "3 séries x 40-60 seg", "muscle": "Core" },
+                    { "id": "ter_7", "name": "Cardio: 2min correr + 2min caminhar (4-5x)", "reps": "Pós-treino", "muscle": "Cardio" }
+                ],
+                "tip": "O face pull protege o ombro e melhora postura — não pule."
+            },
+            {
+                "id": "quarta", "name": "Quarta", "type": "LEGS — Pernas + Glúteos + Panturrilhas",
+                "exercises": [
+                    { "id": "qua_1", "name": "Agachamento no rack", "reps": "4 séries x 10-12 reps", "muscle": "Quadríceps" },
+                    { "id": "qua_2", "name": "Afundo caminhando", "reps": "3 séries x 10 reps/perna", "muscle": "Quadríceps" },
+                    { "id": "qua_3", "name": "Cadeira extensora", "reps": "3 séries x 12-15 reps", "muscle": "Quadríceps" },
+                    { "id": "qua_4", "name": "Stiff com halteres", "reps": "4 séries x 10-12 reps", "muscle": "Posterior" },
+                    { "id": "qua_5", "name": "Ponte de glúteo com haltere", "reps": "4 séries x 12 reps", "muscle": "Glúteo" },
+                    { "id": "qua_6", "name": "Elevação de panturrilha", "reps": "4 séries x 15-20 reps (2s topo)", "muscle": "Panturrilha" },
+                    { "id": "qua_7", "name": "Abdominal reverso ou bicicleta", "reps": "3 séries x 15-20 reps", "muscle": "Core" }
+                ],
+                "tip": "Agachamento primeiro com energia total. Extensora e stiff equilibram frente e posterior."
+            },
+            {
+                "id": "quinta", "name": "Quinta", "type": "PUSH variação — Peito/Ombros/Tríceps",
+                "exercises": [
+                    { "id": "qui_1", "name": "Supino inclinado", "reps": "4 séries x 10-12 reps", "muscle": "Peito" },
+                    { "id": "qui_2", "name": "Crucifixo no cabo", "reps": "4 séries x 12-15 reps", "muscle": "Peito" },
+                    { "id": "qui_3", "name": "Desenvolvimento militar", "reps": "3 séries x 10-12 reps", "muscle": "Ombro" },
+                    { "id": "qui_4", "name": "Elevação lateral com halteres", "reps": "3 séries x 12-15 reps", "muscle": "Ombro" },
+                    { "id": "qui_5", "name": "Tríceps testa ou pulley", "reps": "4 séries x 12-15 reps", "muscle": "Tríceps" },
+                    { "id": "qui_6", "name": "Elevação frontal no cabo", "reps": "3 séries x 12 reps", "muscle": "Ombro" },
+                    { "id": "qui_7", "name": "Prancha com TRX ou bola suíça", "reps": "3 séries x 45-60 seg", "muscle": "Core" },
+                    { "id": "qui_8", "name": "Cardio: 2min correr + 2min caminhar (4-5x)", "reps": "Pós-treino", "muscle": "Cardio" }
+                ],
+                "tip": "Supino inclinado atinge a parte superior do peito — área chave para volume e definição."
+            },
+            {
+                "id": "sexta", "name": "Sexta", "type": "PULL + Pernas leves",
+                "exercises": [
+                    { "id": "sex_1", "name": "Puxada na máquina", "reps": "4 séries x 10-12 reps", "muscle": "Costas" },
+                    { "id": "sex_2", "name": "Remada TRX/halteres unilaterais", "reps": "4 séries x 12 reps", "muscle": "Costas" },
+                    { "id": "sex_3", "name": "Rosca bíceps com halteres", "reps": "4 séries x 12 reps", "muscle": "Bíceps" },
+                    { "id": "sex_4", "name": "Bulgarian split squat / Afundo", "reps": "3 séries x 10 reps/perna", "muscle": "Quadríceps" },
+                    { "id": "sex_5", "name": "Elevação de panturrilha", "reps": "4 séries x 15-20 reps", "muscle": "Panturrilha" },
+                    { "id": "sex_6", "name": "Face pull + abdominal no cabo", "reps": "3 séries combinadas", "muscle": "Core" }
+                ],
+                "tip": "Bulgarian split squat é difícil mas eficiente — use carga leve no início."
+            },
+            {
+                "id": "sabado", "name": "Sábado", "type": "Treino leve + Corrida",
+                "exercises": [
+                    { "id": "sab_1", "name": "Bike/esteira aquecimento", "reps": "10-15 min ritmo leve", "muscle": "Cardio" },
+                    { "id": "sab_2", "name": "TRX remada + flexão", "reps": "3 séries x 12 reps", "muscle": "Funcional" },
+                    { "id": "sab_3", "name": "Clean and press (saco areia)", "reps": "3 séries x 8-10 reps", "muscle": "Funcional" },
+                    { "id": "sab_4", "name": "Lunges leves", "reps": "3 séries x 10 reps/perna", "muscle": "Pernas" },
+                    { "id": "sab_5", "name": "Elev. pernas barra + prancha lateral", "reps": "3 séries cada", "muscle": "Core" },
+                    { "id": "sab_6", "name": "Cardio: 2min correr + 1-2min caminhar (4-5x)", "reps": "Pós-treino", "muscle": "Cardio" }
+                ],
+                "tip": "Intensidade baixa — o objetivo é se mover, não se cansar."
+            },
+            {
+                "id": "domingo", "name": "Domingo", "type": "Recuperação ativa",
+                "exercises": [
+                    { "id": "dom_1", "name": "Caminhada leve", "reps": "20-30 min", "muscle": "Cardio" },
+                    { "id": "dom_2", "name": "Ponte de glúteo simples", "reps": "3 séries x 12 reps leve", "muscle": "Glúteo" },
+                    { "id": "dom_3", "name": "Alongamento: ombros e peito", "reps": "5 min", "muscle": "Flex" },
+                    { "id": "dom_4", "name": "Alongamento: panturrilhas/lombar", "reps": "5 min", "muscle": "Flex" }
+                ],
+                "tip": "Recuperação é parte do treino. Respeite esse dia — é aqui que o músculo cresce."
+            }
+        ];
+        let completedExercises = {};
+        try {
+            completedExercises = JSON.parse(localStorage.getItem('workoutProgress')) || {};
+        } catch(e) {
+            console.warn('LocalStorage bloqueado, usando memória temporária.');
+        }
+        let currentDayId = '';
+
+        function init() {
+            // Display today's date nicely
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const todayStr = new Date().toLocaleDateString('pt-BR', options);
+            document.getElementById('date-display').textContent = todayStr.charAt(0).toUpperCase() + todayStr.slice(1);
+
+            // Determine current day of week (0 = Sunday, 1 = Monday...)
+            const dayOfWeek = new Date().getDay();
+            const daysMap = [6, 0, 1, 2, 3, 4, 5]; // Map to our array index: Dom=6, Seg=0...
+            const initialDayIndex = daysMap[dayOfWeek];
+            currentDayId = workoutData[initialDayIndex].id;
+
+            renderTabs();
+            renderContent();
+            updateProgressBar();
+            
+            // Scroll to the active tab
+            setTimeout(() => {
+                const activeTab = document.querySelector('.day-tab.active');
+                if(activeTab) {
+                    activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            }, 100);
+        }
+
+        function renderTabs() {
+            const slider = document.getElementById('days-slider');
+            slider.innerHTML = '';
+            
+            workoutData.forEach(day => {
+                const tab = document.createElement('div');
+                tab.className = `day-tab ${day.id === currentDayId ? 'active' : ''}`;
+                tab.textContent = day.name;
+                tab.onclick = () => {
+                    currentDayId = day.id;
+                    renderTabs();
+                    renderContent();
+                    updateProgressBar();
+                };
+                slider.appendChild(tab);
+            });
+        }
+
+        function renderContent() {
+            const main = document.getElementById('main-content');
+            main.innerHTML = '';
+
+            const dayData = workoutData.find(d => d.id === currentDayId);
+            
+            // Wrapper
+            const wrapper = document.createElement('div');
+            wrapper.className = 'day-content active';
+
+            // Title
+            const title = document.createElement('h2');
+            title.className = 'workout-title';
+            title.innerHTML = `${dayData.type}`;
+            wrapper.appendChild(title);
+
+            // Exercises
+            dayData.exercises.forEach(ex => {
+                const isCompleted = completedExercises[ex.id];
+                
+                const card = document.createElement('div');
+                card.className = `exercise-card ${isCompleted ? 'completed' : ''}`;
+                card.onclick = () => toggleExercise(ex.id, card);
+
+                card.innerHTML = `
+                    <div class="checkbox">
+                        <svg viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    <div class="exercise-info">
+                        <div class="exercise-name">${ex.name}</div>
+                        <div class="exercise-reps">${ex.reps}</div>
+                        <span class="muscle-badge">${ex.muscle}</span>
+                    </div>
+                `;
+                
+                wrapper.appendChild(card);
+            });
+
+            // Tip
+            if(dayData.tip) {
+                const tip = document.createElement('div');
+                tip.className = 'tip-card';
+                tip.innerHTML = `
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div class="tip-text"><strong>Dica:</strong> ${dayData.tip}</div>
+                `;
+                wrapper.appendChild(tip);
+            }
+            
+            // Reset Button
+            const resetBtn = document.createElement('button');
+            resetBtn.className = 'reset-btn';
+            resetBtn.textContent = 'Limpar progresso do dia';
+            resetBtn.onclick = () => resetDayProgress(dayData.id);
+            wrapper.appendChild(resetBtn);
+
+            main.appendChild(wrapper);
+        }
+
+        function toggleExercise(exId, cardElement) {
+            if (completedExercises[exId]) {
+                delete completedExercises[exId];
+                cardElement.classList.remove('completed');
+            } else {
+                completedExercises[exId] = true;
+                cardElement.classList.add('completed');
+            }
+            
+            try {
+                localStorage.setItem('workoutProgress', JSON.stringify(completedExercises));
+            } catch(e) {}
+            updateProgressBar();
+        }
+        
+        function resetDayProgress(dayId) {
+            if(confirm('Deseja desmarcar todos os exercícios deste dia?')) {
+                const dayData = workoutData.find(d => d.id === dayId);
+                dayData.exercises.forEach(ex => {
+                    delete completedExercises[ex.id];
+                });
+                try {
+                    localStorage.setItem('workoutProgress', JSON.stringify(completedExercises));
+                } catch(e) {}
+                renderContent();
+                updateProgressBar();
+            }
+        }
+
+        function updateProgressBar() {
+            const dayData = workoutData.find(d => d.id === currentDayId);
+            const total = dayData.exercises.length;
+            const completed = dayData.exercises.filter(ex => completedExercises[ex.id]).length;
+            const percentage = total === 0 ? 0 : (completed / total) * 100;
+            
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+        }
+
+        // Run init
+        init();
+    </script>
+</body>
+</html>
