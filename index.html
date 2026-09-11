@@ -8,12 +8,15 @@
         :root {
             --bg-color: #0f172a;
             --card-bg: #1e293b;
+            --card-bg-expanded: #233045;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --accent: #10b981;
             --accent-glow: rgba(16, 185, 129, 0.2);
             --border: #334155;
             --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --timer-bg: #0f172aa6;
+            --danger: #ef4444;
         }
 
         * {
@@ -28,7 +31,7 @@
             color: var(--text-main);
             font-family: var(--font-family);
             line-height: 1.5;
-            padding-bottom: 80px;
+            padding-bottom: 120px; /* Mais espaço para o timer flutuante */
         }
 
         header {
@@ -87,20 +90,6 @@
             padding: 0 20px;
         }
 
-        .day-content {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .day-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         .workout-title {
             font-size: 18px;
             font-weight: 600;
@@ -115,17 +104,9 @@
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 16px;
             margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            cursor: pointer;
             transition: all 0.2s ease;
-        }
-
-        .exercise-card:active {
-            transform: scale(0.98);
+            overflow: hidden;
         }
 
         .exercise-card.completed {
@@ -133,39 +114,16 @@
             background: rgba(16, 185, 129, 0.05);
         }
 
-        .checkbox {
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            border: 2px solid var(--text-muted);
+        .exercise-header {
+            padding: 16px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.2s ease;
+            justify-content: space-between;
+            cursor: pointer;
         }
-
-        .exercise-card.completed .checkbox {
-            background: var(--accent);
-            border-color: var(--accent);
-        }
-
-        .checkbox svg {
-            width: 16px;
-            height: 16px;
-            fill: none;
-            stroke: #fff;
-            stroke-width: 3;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            opacity: 0;
-            transform: scale(0.5);
-            transition: all 0.2s ease;
-        }
-
-        .exercise-card.completed .checkbox svg {
-            opacity: 1;
-            transform: scale(1);
+        
+        .exercise-header:active {
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .exercise-info {
@@ -200,6 +158,116 @@
             border-radius: 6px;
             background: rgba(255, 255, 255, 0.1);
             color: var(--text-main);
+        }
+
+        .exercise-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .set-counter {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .exercise-card.completed .set-counter {
+            color: var(--accent);
+        }
+
+        .chevron {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text-muted);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: transform 0.3s ease;
+        }
+
+        .exercise-card.expanded .chevron {
+            transform: rotate(180deg);
+        }
+
+        .exercise-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            background: var(--card-bg-expanded);
+            border-top: 1px solid transparent;
+        }
+
+        .exercise-card.expanded .exercise-details {
+            max-height: 300px;
+            padding: 16px;
+            opacity: 1;
+            border-top: 1px solid var(--border);
+        }
+
+        .weight-input-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .weight-input-group label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .weight-input-group input {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 120px;
+            outline: none;
+            font-family: var(--font-family);
+        }
+
+        .weight-input-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-glow);
+        }
+
+        .sets-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .set-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg-color);
+            border: 2px solid var(--border);
+            color: var(--text-muted);
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .set-btn:active {
+            transform: scale(0.9);
+        }
+
+        .set-btn.completed {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 12px var(--accent-glow);
         }
 
         .tip-card {
@@ -258,8 +326,80 @@
             transition: all 0.2s ease;
         }
 
-        .reset-btn:active {
-            background: rgba(255, 255, 255, 0.05);
+        /* Timer Flutuante */
+        .rest-timer {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(150%);
+            width: calc(100% - 40px);
+            max-width: 400px;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .rest-timer.active {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .timer-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .timer-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .timer-time {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .timer-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .timer-btn:active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .timer-btn.stop {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .timer-btn.stop:active {
+            background: rgba(239, 68, 68, 0.2);
         }
 
     </style>
@@ -275,134 +415,161 @@
         </div>
     </header>
 
-    <div class="days-slider" id="days-slider">
-        <!-- Tabs will be injected here -->
-    </div>
+    <div class="days-slider" id="days-slider"></div>
 
-    <main id="main-content">
-        <!-- Content will be injected here -->
-    </main>
+    <main id="main-content"></main>
+
+    <!-- Timer Flutuante -->
+    <div id="rest-timer" class="rest-timer">
+        <div class="timer-info">
+            <span class="timer-label">Descanso</span>
+            <span class="timer-time" id="timer-display">01:00</span>
+        </div>
+        <div class="timer-controls">
+            <button class="timer-btn" onclick="addTimerTime(-10)">-10s</button>
+            <button class="timer-btn" onclick="addTimerTime(30)">+30s</button>
+            <button class="timer-btn stop" onclick="stopTimer()">Parar</button>
+        </div>
+    </div>
 
     <script>
         const workoutData = [
             {
                 "id": "segunda", "name": "Segunda", "type": "PUSH — Peito + Ombros + Tríceps",
                 "exercises": [
-                    { "id": "seg_1", "name": "Supino reto com barra/halteres", "reps": "4 séries x 10-12 reps", "muscle": "Peito" },
-                    { "id": "seg_2", "name": "Crucifixo no cabo (Evolution)", "reps": "4 séries x 12-15 reps", "muscle": "Peito" },
-                    { "id": "seg_3", "name": "Desenvolvimento ombros halteres", "reps": "4 séries x 10-12 reps", "muscle": "Ombro" },
-                    { "id": "seg_4", "name": "Elevação lateral cabo/halteres", "reps": "3 séries x 12-15 reps", "muscle": "Ombro" },
-                    { "id": "seg_5", "name": "Tríceps no pulley (corda/barra)", "reps": "4 séries x 12-15 reps", "muscle": "Tríceps" },
-                    { "id": "seg_6", "name": "Abdominal crunch no cabo", "reps": "3 séries x 15-20 reps", "muscle": "Core" }
+                    { "id": "seg_1", "name": "Supino reto com barra/halteres", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Peito" },
+                    { "id": "seg_2", "name": "Crucifixo no cabo (Evolution)", "reps": "4 séries x 12-15 reps", "sets": 4, "muscle": "Peito" },
+                    { "id": "seg_3", "name": "Desenvolvimento ombros halteres", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Ombro" },
+                    { "id": "seg_4", "name": "Elevação lateral cabo/halteres", "reps": "3 séries x 12-15 reps", "sets": 3, "muscle": "Ombro" },
+                    { "id": "seg_5", "name": "Tríceps no pulley (corda/barra)", "reps": "4 séries x 12-15 reps", "sets": 4, "muscle": "Tríceps" },
+                    { "id": "seg_6", "name": "Abdominal crunch no cabo", "reps": "3 séries x 15-20 reps", "sets": 3, "muscle": "Core" }
                 ],
                 "tip": "Priorize o supino com energia máxima — é o exercício principal do dia."
             },
             {
                 "id": "terca", "name": "Terça", "type": "PULL — Costas + Bíceps",
                 "exercises": [
-                    { "id": "ter_1", "name": "Puxada frente na máquina", "reps": "4 séries x 10-12 reps", "muscle": "Costas" },
-                    { "id": "ter_2", "name": "Remada curvada barra/halteres", "reps": "4 séries x 10-12 reps", "muscle": "Costas" },
-                    { "id": "ter_3", "name": "Remada no cabo baixo", "reps": "3 séries x 12 reps", "muscle": "Costas" },
-                    { "id": "ter_4", "name": "Face pull no cabo", "reps": "3 séries x 15 reps", "muscle": "Ombro" },
-                    { "id": "ter_5", "name": "Rosca bíceps alternada", "reps": "4 séries x 12 reps", "muscle": "Bíceps" },
-                    { "id": "ter_6", "name": "Prancha frontal", "reps": "3 séries x 40-60 seg", "muscle": "Core" },
-                    { "id": "ter_7", "name": "Cardio: 2min correr + 2min caminhar (4-5x)", "reps": "Pós-treino", "muscle": "Cardio" }
+                    { "id": "ter_1", "name": "Puxada frente na máquina", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Costas" },
+                    { "id": "ter_2", "name": "Remada curvada barra/halteres", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Costas" },
+                    { "id": "ter_3", "name": "Remada no cabo baixo", "reps": "3 séries x 12 reps", "sets": 3, "muscle": "Costas" },
+                    { "id": "ter_4", "name": "Face pull no cabo", "reps": "3 séries x 15 reps", "sets": 3, "muscle": "Ombro" },
+                    { "id": "ter_5", "name": "Rosca bíceps alternada", "reps": "4 séries x 12 reps", "sets": 4, "muscle": "Bíceps" },
+                    { "id": "ter_6", "name": "Prancha frontal", "reps": "3 séries x 40-60 seg", "sets": 3, "muscle": "Core" },
+                    { "id": "ter_7", "name": "Cardio: 2min correr + 2min caminhar (4-5x)", "reps": "Pós-treino", "sets": 1, "muscle": "Cardio" }
                 ],
                 "tip": "O face pull protege o ombro e melhora postura — não pule."
             },
             {
                 "id": "quarta", "name": "Quarta", "type": "LEGS — Pernas + Glúteos + Panturrilhas",
                 "exercises": [
-                    { "id": "qua_1", "name": "Agachamento no rack", "reps": "4 séries x 10-12 reps", "muscle": "Quadríceps" },
-                    { "id": "qua_2", "name": "Afundo caminhando", "reps": "3 séries x 10 reps/perna", "muscle": "Quadríceps" },
-                    { "id": "qua_3", "name": "Cadeira extensora", "reps": "3 séries x 12-15 reps", "muscle": "Quadríceps" },
-                    { "id": "qua_4", "name": "Stiff com halteres", "reps": "4 séries x 10-12 reps", "muscle": "Posterior" },
-                    { "id": "qua_5", "name": "Ponte de glúteo com haltere", "reps": "4 séries x 12 reps", "muscle": "Glúteo" },
-                    { "id": "qua_6", "name": "Elevação de panturrilha", "reps": "4 séries x 15-20 reps (2s topo)", "muscle": "Panturrilha" },
-                    { "id": "qua_7", "name": "Abdominal reverso ou bicicleta", "reps": "3 séries x 15-20 reps", "muscle": "Core" }
+                    { "id": "qua_1", "name": "Agachamento no rack", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Quadríceps" },
+                    { "id": "qua_2", "name": "Afundo caminhando", "reps": "3 séries x 10 reps/perna", "sets": 3, "muscle": "Quadríceps" },
+                    { "id": "qua_3", "name": "Cadeira extensora", "reps": "3 séries x 12-15 reps", "sets": 3, "muscle": "Quadríceps" },
+                    { "id": "qua_4", "name": "Stiff com halteres", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Posterior" },
+                    { "id": "qua_5", "name": "Ponte de glúteo com haltere", "reps": "4 séries x 12 reps", "sets": 4, "muscle": "Glúteo" },
+                    { "id": "qua_6", "name": "Elevação de panturrilha", "reps": "4 séries x 15-20 reps (2s topo)", "sets": 4, "muscle": "Panturrilha" },
+                    { "id": "qua_7", "name": "Abdominal reverso ou bicicleta", "reps": "3 séries x 15-20 reps", "sets": 3, "muscle": "Core" }
                 ],
                 "tip": "Agachamento primeiro com energia total. Extensora e stiff equilibram frente e posterior."
             },
             {
                 "id": "quinta", "name": "Quinta", "type": "PUSH variação — Peito/Ombros/Tríceps",
                 "exercises": [
-                    { "id": "qui_1", "name": "Supino inclinado", "reps": "4 séries x 10-12 reps", "muscle": "Peito" },
-                    { "id": "qui_2", "name": "Crucifixo no cabo", "reps": "4 séries x 12-15 reps", "muscle": "Peito" },
-                    { "id": "qui_3", "name": "Desenvolvimento militar", "reps": "3 séries x 10-12 reps", "muscle": "Ombro" },
-                    { "id": "qui_4", "name": "Elevação lateral com halteres", "reps": "3 séries x 12-15 reps", "muscle": "Ombro" },
-                    { "id": "qui_5", "name": "Tríceps testa ou pulley", "reps": "4 séries x 12-15 reps", "muscle": "Tríceps" },
-                    { "id": "qui_6", "name": "Elevação frontal no cabo", "reps": "3 séries x 12 reps", "muscle": "Ombro" },
-                    { "id": "qui_7", "name": "Prancha com TRX ou bola suíça", "reps": "3 séries x 45-60 seg", "muscle": "Core" },
-                    { "id": "qui_8", "name": "Cardio: 2min correr + 2min caminhar (4-5x)", "reps": "Pós-treino", "muscle": "Cardio" }
+                    { "id": "qui_1", "name": "Supino inclinado", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Peito" },
+                    { "id": "qui_2", "name": "Crucifixo no cabo", "reps": "4 séries x 12-15 reps", "sets": 4, "muscle": "Peito" },
+                    { "id": "qui_3", "name": "Desenvolvimento militar", "reps": "3 séries x 10-12 reps", "sets": 3, "muscle": "Ombro" },
+                    { "id": "qui_4", "name": "Elevação lateral com halteres", "reps": "3 séries x 12-15 reps", "sets": 3, "muscle": "Ombro" },
+                    { "id": "qui_5", "name": "Tríceps testa ou pulley", "reps": "4 séries x 12-15 reps", "sets": 4, "muscle": "Tríceps" },
+                    { "id": "qui_6", "name": "Elevação frontal no cabo", "reps": "3 séries x 12 reps", "sets": 3, "muscle": "Ombro" },
+                    { "id": "qui_7", "name": "Prancha com TRX ou bola suíça", "reps": "3 séries x 45-60 seg", "sets": 3, "muscle": "Core" },
+                    { "id": "qui_8", "name": "Cardio: 2min correr + 2min caminhar (4-5x)", "reps": "Pós-treino", "sets": 1, "muscle": "Cardio" }
                 ],
                 "tip": "Supino inclinado atinge a parte superior do peito — área chave para volume e definição."
             },
             {
                 "id": "sexta", "name": "Sexta", "type": "PULL + Pernas leves",
                 "exercises": [
-                    { "id": "sex_1", "name": "Puxada na máquina", "reps": "4 séries x 10-12 reps", "muscle": "Costas" },
-                    { "id": "sex_2", "name": "Remada TRX/halteres unilaterais", "reps": "4 séries x 12 reps", "muscle": "Costas" },
-                    { "id": "sex_3", "name": "Rosca bíceps com halteres", "reps": "4 séries x 12 reps", "muscle": "Bíceps" },
-                    { "id": "sex_4", "name": "Bulgarian split squat / Afundo", "reps": "3 séries x 10 reps/perna", "muscle": "Quadríceps" },
-                    { "id": "sex_5", "name": "Elevação de panturrilha", "reps": "4 séries x 15-20 reps", "muscle": "Panturrilha" },
-                    { "id": "sex_6", "name": "Face pull + abdominal no cabo", "reps": "3 séries combinadas", "muscle": "Core" }
+                    { "id": "sex_1", "name": "Puxada na máquina", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Costas" },
+                    { "id": "sex_2", "name": "Remada TRX/halteres unilaterais", "reps": "4 séries x 12 reps", "sets": 4, "muscle": "Costas" },
+                    { "id": "sex_3", "name": "Rosca bíceps com halteres", "reps": "4 séries x 12 reps", "sets": 4, "muscle": "Bíceps" },
+                    { "id": "sex_4", "name": "Bulgarian split squat / Afundo", "reps": "3 séries x 10 reps/perna", "sets": 3, "muscle": "Quadríceps" },
+                    { "id": "sex_5", "name": "Elevação de panturrilha", "reps": "4 séries x 15-20 reps", "sets": 4, "muscle": "Panturrilha" },
+                    { "id": "sex_6", "name": "Face pull + abdominal no cabo", "reps": "3 séries combinadas", "sets": 3, "muscle": "Core" }
                 ],
                 "tip": "Bulgarian split squat é difícil mas eficiente — use carga leve no início."
             },
             {
                 "id": "sabado", "name": "Sábado", "type": "Treino leve + Corrida",
                 "exercises": [
-                    { "id": "sab_1", "name": "Bike/esteira aquecimento", "reps": "10-15 min ritmo leve", "muscle": "Cardio" },
-                    { "id": "sab_2", "name": "TRX remada + flexão", "reps": "3 séries x 12 reps", "muscle": "Funcional" },
-                    { "id": "sab_3", "name": "Clean and press (saco areia)", "reps": "3 séries x 8-10 reps", "muscle": "Funcional" },
-                    { "id": "sab_4", "name": "Lunges leves", "reps": "3 séries x 10 reps/perna", "muscle": "Pernas" },
-                    { "id": "sab_5", "name": "Elev. pernas barra + prancha lateral", "reps": "3 séries cada", "muscle": "Core" },
-                    { "id": "sab_6", "name": "Cardio: 2min correr + 1-2min caminhar (4-5x)", "reps": "Pós-treino", "muscle": "Cardio" }
+                    { "id": "sab_1", "name": "Bike/esteira aquecimento", "reps": "10-15 min ritmo leve", "sets": 1, "muscle": "Cardio" },
+                    { "id": "sab_2", "name": "TRX remada + flexão", "reps": "3 séries x 12 reps", "sets": 3, "muscle": "Funcional" },
+                    { "id": "sab_3", "name": "Clean and press (saco areia)", "reps": "3 séries x 8-10 reps", "sets": 3, "muscle": "Funcional" },
+                    { "id": "sab_4", "name": "Lunges leves", "reps": "3 séries x 10 reps/perna", "sets": 3, "muscle": "Pernas" },
+                    { "id": "sab_5", "name": "Elev. pernas barra + prancha lateral", "reps": "3 séries cada", "sets": 3, "muscle": "Core" },
+                    { "id": "sab_6", "name": "Cardio: 2min correr + 1-2min caminhar (4-5x)", "reps": "Pós-treino", "sets": 1, "muscle": "Cardio" }
                 ],
                 "tip": "Intensidade baixa — o objetivo é se mover, não se cansar."
             },
             {
                 "id": "domingo", "name": "Domingo", "type": "Recuperação ativa",
                 "exercises": [
-                    { "id": "dom_1", "name": "Caminhada leve", "reps": "20-30 min", "muscle": "Cardio" },
-                    { "id": "dom_2", "name": "Ponte de glúteo simples", "reps": "3 séries x 12 reps leve", "muscle": "Glúteo" },
-                    { "id": "dom_3", "name": "Alongamento: ombros e peito", "reps": "5 min", "muscle": "Flex" },
-                    { "id": "dom_4", "name": "Alongamento: panturrilhas/lombar", "reps": "5 min", "muscle": "Flex" }
+                    { "id": "dom_1", "name": "Caminhada leve", "reps": "20-30 min", "sets": 1, "muscle": "Cardio" },
+                    { "id": "dom_2", "name": "Ponte de glúteo simples", "reps": "3 séries x 12 reps leve", "sets": 3, "muscle": "Glúteo" },
+                    { "id": "dom_3", "name": "Alongamento: ombros e peito", "reps": "5 min", "sets": 1, "muscle": "Flex" },
+                    { "id": "dom_4", "name": "Alongamento: panturrilhas/lombar", "reps": "5 min", "sets": 1, "muscle": "Flex" }
                 ],
                 "tip": "Recuperação é parte do treino. Respeite esse dia — é aqui que o músculo cresce."
             }
         ];
+
         let completedExercises = {};
-        try {
-            completedExercises = JSON.parse(localStorage.getItem('workoutProgress')) || {};
-        } catch(e) {
-            console.warn('LocalStorage bloqueado, usando memória temporária.');
-        }
         let currentDayId = '';
+        
+        // Timer globals
+        let timerInterval;
+        let timeRemaining = 0;
+        let timerAudioContext = null;
+
+        function loadData() {
+            try {
+                const stored = JSON.parse(localStorage.getItem('workoutProgressV2')) || {};
+                completedExercises = stored;
+            } catch(e) {
+                console.warn('LocalStorage error', e);
+            }
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem('workoutProgressV2', JSON.stringify(completedExercises));
+            } catch(e) {}
+        }
+
+        function getExerciseData(exId, totalSets) {
+            if (!completedExercises[exId]) {
+                completedExercises[exId] = {
+                    sets: Array(totalSets).fill(false),
+                    weight: ''
+                };
+            }
+            return completedExercises[exId];
+        }
 
         function init() {
-            // Display today's date nicely
+            loadData();
+
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const todayStr = new Date().toLocaleDateString('pt-BR', options);
             document.getElementById('date-display').textContent = todayStr.charAt(0).toUpperCase() + todayStr.slice(1);
 
-            // Determine current day of week (0 = Sunday, 1 = Monday...)
             const dayOfWeek = new Date().getDay();
-            const daysMap = [6, 0, 1, 2, 3, 4, 5]; // Map to our array index: Dom=6, Seg=0...
+            const daysMap = [6, 0, 1, 2, 3, 4, 5];
             const initialDayIndex = daysMap[dayOfWeek];
             currentDayId = workoutData[initialDayIndex].id;
 
             renderTabs();
             renderContent();
             updateProgressBar();
-            
-            // Scroll to the active tab
-            setTimeout(() => {
-                const activeTab = document.querySelector('.day-tab.active');
-                if(activeTab) {
-                    activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                }
-            }, 100);
         }
 
         function renderTabs() {
@@ -429,41 +596,76 @@
 
             const dayData = workoutData.find(d => d.id === currentDayId);
             
-            // Wrapper
-            const wrapper = document.createElement('div');
-            wrapper.className = 'day-content active';
-
-            // Title
             const title = document.createElement('h2');
             title.className = 'workout-title';
             title.innerHTML = `${dayData.type}`;
-            wrapper.appendChild(title);
+            main.appendChild(title);
 
-            // Exercises
             dayData.exercises.forEach(ex => {
-                const isCompleted = completedExercises[ex.id];
+                const exData = getExerciseData(ex.id, ex.sets);
+                const setsCompletedCount = exData.sets.filter(s => s).length;
+                const isFullyCompleted = setsCompletedCount === ex.sets;
                 
                 const card = document.createElement('div');
-                card.className = `exercise-card ${isCompleted ? 'completed' : ''}`;
-                card.onclick = () => toggleExercise(ex.id, card);
-
-                card.innerHTML = `
-                    <div class="checkbox">
-                        <svg viewBox="0 0 24 24">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                    </div>
+                card.className = `exercise-card ${isFullyCompleted ? 'completed' : ''}`;
+                card.id = `card-${ex.id}`;
+                
+                // Header (Click to expand)
+                const header = document.createElement('div');
+                header.className = 'exercise-header';
+                header.onclick = () => toggleExpand(ex.id);
+                
+                header.innerHTML = `
                     <div class="exercise-info">
                         <div class="exercise-name">${ex.name}</div>
                         <div class="exercise-reps">${ex.reps}</div>
                         <span class="muscle-badge">${ex.muscle}</span>
                     </div>
+                    <div class="exercise-status">
+                        <span class="set-counter" id="counter-${ex.id}">${setsCompletedCount}/${ex.sets}</span>
+                        <svg class="chevron" viewBox="0 0 24 24">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
                 `;
                 
-                wrapper.appendChild(card);
+                // Details (Expanded area)
+                const details = document.createElement('div');
+                details.className = 'exercise-details';
+                
+                // Weight Input
+                const weightGroup = document.createElement('div');
+                weightGroup.className = 'weight-input-group';
+                weightGroup.innerHTML = `
+                    <label>Última carga:</label>
+                    <input type="text" placeholder="ex: 40kg" value="${exData.weight || ''}" 
+                           oninput="updateWeight('${ex.id}', this.value)">
+                `;
+                details.appendChild(weightGroup);
+
+                // Sets Buttons
+                const setsGroup = document.createElement('div');
+                setsGroup.className = 'sets-group';
+                setsGroup.id = `sets-${ex.id}`;
+                
+                for(let i=0; i < ex.sets; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = `set-btn ${exData.sets[i] ? 'completed' : ''}`;
+                    btn.textContent = i + 1;
+                    btn.onclick = (e) => {
+                        e.stopPropagation(); // Evita expandir/retrair o card ao clicar na série
+                        toggleSet(ex.id, i, ex.sets);
+                    };
+                    setsGroup.appendChild(btn);
+                }
+                
+                details.appendChild(setsGroup);
+                
+                card.appendChild(header);
+                card.appendChild(details);
+                main.appendChild(card);
             });
 
-            // Tip
             if(dayData.tip) {
                 const tip = document.createElement('div');
                 tip.className = 'tip-card';
@@ -471,43 +673,78 @@
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <div class="tip-text"><strong>Dica:</strong> ${dayData.tip}</div>
                 `;
-                wrapper.appendChild(tip);
+                main.appendChild(tip);
             }
             
-            // Reset Button
             const resetBtn = document.createElement('button');
             resetBtn.className = 'reset-btn';
             resetBtn.textContent = 'Limpar progresso do dia';
             resetBtn.onclick = () => resetDayProgress(dayData.id);
-            wrapper.appendChild(resetBtn);
-
-            main.appendChild(wrapper);
+            main.appendChild(resetBtn);
         }
 
-        function toggleExercise(exId, cardElement) {
-            if (completedExercises[exId]) {
-                delete completedExercises[exId];
-                cardElement.classList.remove('completed');
+        function toggleExpand(exId) {
+            const card = document.getElementById(`card-${exId}`);
+            if (card.classList.contains('expanded')) {
+                card.classList.remove('expanded');
             } else {
-                completedExercises[exId] = true;
-                cardElement.classList.add('completed');
+                // Fechar outros cards se quiser (opcional), mas vamos deixar abrir múltiplos
+                card.classList.add('expanded');
+            }
+        }
+
+        function updateWeight(exId, value) {
+            if(completedExercises[exId]) {
+                completedExercises[exId].weight = value;
+                saveData();
+            }
+        }
+
+        function toggleSet(exId, setIndex, totalSets) {
+            initAudioContext(); // Prepara o áudio para o timer caso ainda não exista
+            
+            const exData = completedExercises[exId];
+            const wasCompleted = exData.sets[setIndex];
+            
+            // Toggle
+            exData.sets[setIndex] = !wasCompleted;
+            saveData();
+            
+            // Update UI for sets
+            const setsGroup = document.getElementById(`sets-${exId}`);
+            const btn = setsGroup.children[setIndex];
+            if (exData.sets[setIndex]) {
+                btn.classList.add('completed');
+                // Inicia timer de descanso (padrão 60s) se marcou como feito
+                startTimer(60);
+            } else {
+                btn.classList.remove('completed');
             }
             
-            try {
-                localStorage.setItem('workoutProgress', JSON.stringify(completedExercises));
-            } catch(e) {}
+            // Update Card Status
+            const setsCompletedCount = exData.sets.filter(s => s).length;
+            const counter = document.getElementById(`counter-${exId}`);
+            counter.textContent = `${setsCompletedCount}/${totalSets}`;
+            
+            const card = document.getElementById(`card-${exId}`);
+            if (setsCompletedCount === totalSets) {
+                card.classList.add('completed');
+            } else {
+                card.classList.remove('completed');
+            }
+            
             updateProgressBar();
         }
-        
+
         function resetDayProgress(dayId) {
-            if(confirm('Deseja desmarcar todos os exercícios deste dia?')) {
+            if(confirm('Deseja desmarcar todas as séries deste dia? (Suas cargas serão mantidas)')) {
                 const dayData = workoutData.find(d => d.id === dayId);
                 dayData.exercises.forEach(ex => {
-                    delete completedExercises[ex.id];
+                    if (completedExercises[ex.id]) {
+                        completedExercises[ex.id].sets = Array(ex.sets).fill(false);
+                    }
                 });
-                try {
-                    localStorage.setItem('workoutProgress', JSON.stringify(completedExercises));
-                } catch(e) {}
+                saveData();
                 renderContent();
                 updateProgressBar();
             }
@@ -515,14 +752,79 @@
 
         function updateProgressBar() {
             const dayData = workoutData.find(d => d.id === currentDayId);
-            const total = dayData.exercises.length;
-            const completed = dayData.exercises.filter(ex => completedExercises[ex.id]).length;
-            const percentage = total === 0 ? 0 : (completed / total) * 100;
-            
+            let totalSets = 0;
+            let completedSetsCount = 0;
+
+            dayData.exercises.forEach(ex => {
+                totalSets += ex.sets;
+                if(completedExercises[ex.id]) {
+                    completedSetsCount += completedExercises[ex.id].sets.filter(s => s).length;
+                }
+            });
+
+            const percentage = totalSets === 0 ? 0 : (completedSetsCount / totalSets) * 100;
             document.getElementById('progress-bar').style.width = `${percentage}%`;
         }
 
-        // Run init
+        /* TIMER LOGIC */
+        function initAudioContext() {
+            if (!timerAudioContext) {
+                timerAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function startTimer(seconds) {
+            timeRemaining = seconds;
+            document.getElementById('rest-timer').classList.add('active');
+            updateTimerDisplay();
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                if(timeRemaining <= 0) {
+                    stopTimer();
+                    playBeep();
+                } else {
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
+            const secs = (timeRemaining % 60).toString().padStart(2, '0');
+            document.getElementById('timer-display').textContent = `${mins}:${secs}`;
+        }
+
+        function addTimerTime(secs) {
+            timeRemaining += secs;
+            if(timeRemaining < 0) timeRemaining = 0;
+            updateTimerDisplay();
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            document.getElementById('rest-timer').classList.remove('active');
+        }
+
+        function playBeep() {
+            if (!timerAudioContext) return;
+            const osc = timerAudioContext.createOscillator();
+            const gainNode = timerAudioContext.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, timerAudioContext.currentTime); // 880Hz beep
+            
+            gainNode.gain.setValueAtTime(0.1, timerAudioContext.currentTime); // Volume
+            gainNode.gain.exponentialRampToValueAtTime(0.001, timerAudioContext.currentTime + 0.5);
+            
+            osc.connect(gainNode);
+            gainNode.connect(timerAudioContext.destination);
+            
+            osc.start();
+            osc.stop(timerAudioContext.currentTime + 0.5);
+        }
+
         init();
     </script>
 </body>
