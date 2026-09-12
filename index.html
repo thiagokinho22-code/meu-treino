@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Meu Treino</title>
+    <title>Meu Treino PPL</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -44,10 +44,32 @@
             border-bottom: 1px solid var(--border);
         }
 
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
         h1 {
             font-size: 24px;
             font-weight: 700;
-            margin-bottom: 4px;
+        }
+
+        .reset-week-btn {
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .reset-week-btn:active {
+            background: rgba(239, 68, 68, 0.1);
         }
 
         .subtitle {
@@ -325,6 +347,10 @@
             margin-bottom: 24px;
             transition: all 0.2s ease;
         }
+        
+        .reset-btn:active {
+            background: rgba(255, 255, 255, 0.05);
+        }
 
         /* Timer Flutuante */
         .rest-timer {
@@ -408,7 +434,10 @@
 <body>
 
     <header>
-        <h1>Meu Treino</h1>
+        <div class="header-top">
+            <h1>Meu Treino</h1>
+            <button class="reset-week-btn" onclick="resetWeek()">Zerar Semana</button>
+        </div>
         <div class="subtitle" id="date-display">Carregando...</div>
         <div class="progress-bar-container">
             <div class="progress-bar" id="progress-bar"></div>
@@ -435,90 +464,91 @@
     <script>
         const workoutData = [
             {
-                "id": "segunda", "name": "Segunda", "type": "PUSH — Peito + Ombros + Tríceps",
+                "id": "segunda", "name": "Segunda", "type": "PUSH (Peito + Ombros + Tríceps)",
                 "exercises": [
-                    { "id": "seg_1", "name": "Supino reto com barra/halteres", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Peito" },
-                    { "id": "seg_2", "name": "Crucifixo no cabo (Evolution)", "reps": "4 séries x 12-15 reps", "sets": 4, "muscle": "Peito" },
-                    { "id": "seg_3", "name": "Desenvolvimento ombros halteres", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Ombro" },
-                    { "id": "seg_4", "name": "Elevação lateral cabo/halteres", "reps": "3 séries x 12-15 reps", "sets": 3, "muscle": "Ombro" },
-                    { "id": "seg_5", "name": "Tríceps no pulley (corda/barra)", "reps": "4 séries x 12-15 reps", "sets": 4, "muscle": "Tríceps" },
-                    { "id": "seg_6", "name": "Abdominal crunch no cabo", "reps": "3 séries x 15-20 reps", "sets": 3, "muscle": "Core" }
+                    { "id": "seg_1", "name": "Supino reto com barra ou halteres", "reps": "4x10-12", "sets": 4, "muscle": "Peito" },
+                    { "id": "seg_2", "name": "Crucifixo no cabo (Evolution)", "reps": "4x12-15", "sets": 4, "muscle": "Peito" },
+                    { "id": "seg_3", "name": "Desenvolvimento de ombros com halteres", "reps": "4x10-12", "sets": 4, "muscle": "Ombro" },
+                    { "id": "seg_4", "name": "Elevação lateral no cabo ou halteres", "reps": "3x12-15", "sets": 3, "muscle": "Ombro" },
+                    { "id": "seg_5", "name": "Tríceps no pulley (corda ou barra)", "reps": "4x12-15", "sets": 4, "muscle": "Tríceps" },
+                    { "id": "seg_6", "name": "Abdominal ajoelhado no cabo", "reps": "4x15-20", "sets": 4, "muscle": "Abdômen" }
                 ],
-                "tip": "Priorize o supino com energia máxima — é o exercício principal do dia."
+                "tip": "Descanso: 60-90s (isolamento) | 2-3 min (compostos). Aumente a carga a cada 1-2 semanas."
             },
             {
-                "id": "terca", "name": "Terça", "type": "PULL — Costas + Bíceps",
+                "id": "terca", "name": "Terça", "type": "PULL (Costas + Bíceps)",
                 "exercises": [
-                    { "id": "ter_1", "name": "Puxada frente na máquina", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Costas" },
-                    { "id": "ter_2", "name": "Remada curvada barra/halteres", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Costas" },
-                    { "id": "ter_3", "name": "Remada no cabo baixo", "reps": "3 séries x 12 reps", "sets": 3, "muscle": "Costas" },
-                    { "id": "ter_4", "name": "Face pull no cabo", "reps": "3 séries x 15 reps", "sets": 3, "muscle": "Ombro" },
-                    { "id": "ter_5", "name": "Rosca bíceps alternada", "reps": "4 séries x 12 reps", "sets": 4, "muscle": "Bíceps" },
-                    { "id": "ter_6", "name": "Prancha frontal", "reps": "3 séries x 40-60 seg", "sets": 3, "muscle": "Core" },
-                    { "id": "ter_7", "name": "Cardio: 2min correr + 2min caminhar (4-5x)", "reps": "Pós-treino", "sets": 1, "muscle": "Cardio" }
+                    { "id": "ter_1", "name": "Puxada frente na máquina Evolution", "reps": "4x10-12", "sets": 4, "muscle": "Costas" },
+                    { "id": "ter_2", "name": "Remada curvada com barra ou halteres", "reps": "4x10-12", "sets": 4, "muscle": "Costas" },
+                    { "id": "ter_3", "name": "Remada no cabo baixo", "reps": "3x12", "sets": 3, "muscle": "Costas" },
+                    { "id": "ter_4", "name": "Face pull no cabo", "reps": "3x15", "sets": 3, "muscle": "Ombro" },
+                    { "id": "ter_5", "name": "Rosca bíceps alternada com halteres", "reps": "4x12", "sets": 4, "muscle": "Bíceps" },
+                    { "id": "ter_6", "name": "Abdominal ajoelhado no cabo", "reps": "4x15-20", "sets": 4, "muscle": "Abdômen" },
+                    { "id": "ter_7", "name": "Cardio: 2 min correr + 2 min caminhar", "reps": "4-5 blocos", "sets": 1, "muscle": "Cardio" }
                 ],
-                "tip": "O face pull protege o ombro e melhora postura — não pule."
+                "tip": "Descanso: 60-90s (isolamento) | 2-3 min (compostos). Aumente a carga a cada 1-2 semanas."
             },
             {
-                "id": "quarta", "name": "Quarta", "type": "LEGS — Pernas + Glúteos + Panturrilhas",
+                "id": "quarta", "name": "Quarta", "type": "LEGS (Pernas + Glúteos + Panturrilhas)",
                 "exercises": [
-                    { "id": "qua_1", "name": "Agachamento no rack", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Quadríceps" },
-                    { "id": "qua_2", "name": "Afundo caminhando", "reps": "3 séries x 10 reps/perna", "sets": 3, "muscle": "Quadríceps" },
-                    { "id": "qua_3", "name": "Cadeira extensora", "reps": "3 séries x 12-15 reps", "sets": 3, "muscle": "Quadríceps" },
-                    { "id": "qua_4", "name": "Stiff com halteres", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Posterior" },
-                    { "id": "qua_5", "name": "Ponte de glúteo com haltere", "reps": "4 séries x 12 reps", "sets": 4, "muscle": "Glúteo" },
-                    { "id": "qua_6", "name": "Elevação de panturrilha", "reps": "4 séries x 15-20 reps (2s topo)", "sets": 4, "muscle": "Panturrilha" },
-                    { "id": "qua_7", "name": "Abdominal reverso ou bicicleta", "reps": "3 séries x 15-20 reps", "sets": 3, "muscle": "Core" }
+                    { "id": "qua_1", "name": "Agachamento no Smith (foco glúteo)", "reps": "4x10-12", "sets": 4, "muscle": "Quadríceps/Glúteo" },
+                    { "id": "qua_2", "name": "Afundo caminhando com halteres", "reps": "3x10 por perna", "sets": 3, "muscle": "Quadríceps" },
+                    { "id": "qua_3", "name": "Cadeira extensora", "reps": "3x12-15", "sets": 3, "muscle": "Quadríceps" },
+                    { "id": "qua_4", "name": "Stiff com halteres", "reps": "4x10-12", "sets": 4, "muscle": "Posterior" },
+                    { "id": "qua_5", "name": "Ponte de glúteo com haltere no chão", "reps": "4x12", "sets": 4, "muscle": "Glúteo" },
+                    { "id": "qua_6", "name": "Elevação de panturrilha", "reps": "4x15-20 (pause 2s no topo)", "sets": 4, "muscle": "Panturrilha" },
+                    { "id": "qua_7", "name": "Abdominal ajoelhado no cabo", "reps": "4x15-20", "sets": 4, "muscle": "Abdômen" }
                 ],
-                "tip": "Agachamento primeiro com energia total. Extensora e stiff equilibram frente e posterior."
+                "tip": "Descanso: 60-90s (isolamento) | 2-3 min (compostos). Aumente a carga a cada 1-2 semanas."
             },
             {
-                "id": "quinta", "name": "Quinta", "type": "PUSH variação — Peito/Ombros/Tríceps",
+                "id": "quinta", "name": "Quinta", "type": "PUSH variação (Peito + Ombros + Tríceps)",
                 "exercises": [
-                    { "id": "qui_1", "name": "Supino inclinado", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Peito" },
-                    { "id": "qui_2", "name": "Crucifixo no cabo", "reps": "4 séries x 12-15 reps", "sets": 4, "muscle": "Peito" },
-                    { "id": "qui_3", "name": "Desenvolvimento militar", "reps": "3 séries x 10-12 reps", "sets": 3, "muscle": "Ombro" },
-                    { "id": "qui_4", "name": "Elevação lateral com halteres", "reps": "3 séries x 12-15 reps", "sets": 3, "muscle": "Ombro" },
-                    { "id": "qui_5", "name": "Tríceps testa ou pulley", "reps": "4 séries x 12-15 reps", "sets": 4, "muscle": "Tríceps" },
-                    { "id": "qui_6", "name": "Elevação frontal no cabo", "reps": "3 séries x 12 reps", "sets": 3, "muscle": "Ombro" },
-                    { "id": "qui_7", "name": "Prancha com TRX ou bola suíça", "reps": "3 séries x 45-60 seg", "sets": 3, "muscle": "Core" },
-                    { "id": "qui_8", "name": "Cardio: 2min correr + 2min caminhar (4-5x)", "reps": "Pós-treino", "sets": 1, "muscle": "Cardio" }
+                    { "id": "qui_1", "name": "Supino inclinado com halteres ou máquina", "reps": "4x10-12", "sets": 4, "muscle": "Peito" },
+                    { "id": "qui_2", "name": "Crucifixo no cabo", "reps": "4x12-15", "sets": 4, "muscle": "Peito" },
+                    { "id": "qui_3", "name": "Desenvolvimento militar com halteres", "reps": "3x10-12", "sets": 3, "muscle": "Ombro" },
+                    { "id": "qui_4", "name": "Elevação lateral com halteres", "reps": "3x12-15", "sets": 3, "muscle": "Ombro" },
+                    { "id": "qui_5", "name": "Tríceps testa ou pulley", "reps": "4x12-15", "sets": 4, "muscle": "Tríceps" },
+                    { "id": "qui_6", "name": "Elevação frontal no cabo", "reps": "3x12", "sets": 3, "muscle": "Ombro" },
+                    { "id": "qui_7", "name": "Abdominal ajoelhado no cabo", "reps": "4x15-20", "sets": 4, "muscle": "Abdômen" },
+                    { "id": "qui_8", "name": "Cardio: 2 min correr + 2 min caminhar", "reps": "4-5 blocos", "sets": 1, "muscle": "Cardio" }
                 ],
-                "tip": "Supino inclinado atinge a parte superior do peito — área chave para volume e definição."
+                "tip": "Descanso: 60-90s (isolamento) | 2-3 min (compostos). Aumente a carga a cada 1-2 semanas."
             },
             {
                 "id": "sexta", "name": "Sexta", "type": "PULL + Pernas leves",
                 "exercises": [
-                    { "id": "sex_1", "name": "Puxada na máquina", "reps": "4 séries x 10-12 reps", "sets": 4, "muscle": "Costas" },
-                    { "id": "sex_2", "name": "Remada TRX/halteres unilaterais", "reps": "4 séries x 12 reps", "sets": 4, "muscle": "Costas" },
-                    { "id": "sex_3", "name": "Rosca bíceps com halteres", "reps": "4 séries x 12 reps", "sets": 4, "muscle": "Bíceps" },
-                    { "id": "sex_4", "name": "Bulgarian split squat / Afundo", "reps": "3 séries x 10 reps/perna", "sets": 3, "muscle": "Quadríceps" },
-                    { "id": "sex_5", "name": "Elevação de panturrilha", "reps": "4 séries x 15-20 reps", "sets": 4, "muscle": "Panturrilha" },
-                    { "id": "sex_6", "name": "Face pull + abdominal no cabo", "reps": "3 séries combinadas", "sets": 3, "muscle": "Core" }
+                    { "id": "sex_1", "name": "Puxada na máquina", "reps": "4x10-12", "sets": 4, "muscle": "Costas" },
+                    { "id": "sex_2", "name": "Remada no TRX ou halteres unilaterais", "reps": "4x12", "sets": 4, "muscle": "Costas" },
+                    { "id": "sex_3", "name": "Rosca bíceps com halteres", "reps": "4x12", "sets": 4, "muscle": "Bíceps" },
+                    { "id": "sex_4", "name": "Afundo reverso ou Bulgarian split squat", "reps": "3x10 por perna", "sets": 3, "muscle": "Quadríceps" },
+                    { "id": "sex_5", "name": "Elevação de panturrilha", "reps": "4x15-20", "sets": 4, "muscle": "Panturrilha" },
+                    { "id": "sex_6", "name": "Face pull", "reps": "3x15", "sets": 3, "muscle": "Ombro" },
+                    { "id": "sex_7", "name": "Abdominal ajoelhado no cabo", "reps": "4x15-20", "sets": 4, "muscle": "Abdômen" }
                 ],
-                "tip": "Bulgarian split squat é difícil mas eficiente — use carga leve no início."
+                "tip": "Descanso: 60-90s (isolamento) | 2-3 min (compostos). Aumente a carga a cada 1-2 semanas."
             },
             {
                 "id": "sabado", "name": "Sábado", "type": "Treino leve + Corrida",
                 "exercises": [
-                    { "id": "sab_1", "name": "Bike/esteira aquecimento", "reps": "10-15 min ritmo leve", "sets": 1, "muscle": "Cardio" },
-                    { "id": "sab_2", "name": "TRX remada + flexão", "reps": "3 séries x 12 reps", "sets": 3, "muscle": "Funcional" },
-                    { "id": "sab_3", "name": "Clean and press (saco areia)", "reps": "3 séries x 8-10 reps", "sets": 3, "muscle": "Funcional" },
-                    { "id": "sab_4", "name": "Lunges leves", "reps": "3 séries x 10 reps/perna", "sets": 3, "muscle": "Pernas" },
-                    { "id": "sab_5", "name": "Elev. pernas barra + prancha lateral", "reps": "3 séries cada", "sets": 3, "muscle": "Core" },
-                    { "id": "sab_6", "name": "Cardio: 2min correr + 1-2min caminhar (4-5x)", "reps": "Pós-treino", "sets": 1, "muscle": "Cardio" }
+                    { "id": "sab_1", "name": "Bike ou esteira aquecimento", "reps": "10-15 min leve", "sets": 1, "muscle": "Cardio" },
+                    { "id": "sab_2", "name": "TRX remada + flexão", "reps": "3x12", "sets": 3, "muscle": "Costas/Peito" },
+                    { "id": "sab_3", "name": "Swing com haltere", "reps": "3x12-15", "sets": 3, "muscle": "Funcional" },
+                    { "id": "sab_4", "name": "Lunges leves", "reps": "3x10 por perna", "sets": 3, "muscle": "Pernas" },
+                    { "id": "sab_5", "name": "Abdominal ajoelhado no cabo", "reps": "4x15-20", "sets": 4, "muscle": "Abdômen" },
+                    { "id": "sab_6", "name": "Cardio: 2 min correr + 1-2 min caminhar", "reps": "4-5 blocos", "sets": 1, "muscle": "Cardio" }
                 ],
-                "tip": "Intensidade baixa — o objetivo é se mover, não se cansar."
+                "tip": "Descanso: 60-90s (isolamento) | 2-3 min (compostos). Aumente a carga a cada 1-2 semanas."
             },
             {
                 "id": "domingo", "name": "Domingo", "type": "Recuperação ativa",
                 "exercises": [
                     { "id": "dom_1", "name": "Caminhada leve", "reps": "20-30 min", "sets": 1, "muscle": "Cardio" },
-                    { "id": "dom_2", "name": "Ponte de glúteo simples", "reps": "3 séries x 12 reps leve", "sets": 3, "muscle": "Glúteo" },
-                    { "id": "dom_3", "name": "Alongamento: ombros e peito", "reps": "5 min", "sets": 1, "muscle": "Flex" },
-                    { "id": "dom_4", "name": "Alongamento: panturrilhas/lombar", "reps": "5 min", "sets": 1, "muscle": "Flex" }
+                    { "id": "dom_2", "name": "Ponte de glúteo simples no chão", "reps": "3x12 leve", "sets": 3, "muscle": "Glúteo" },
+                    { "id": "dom_3", "name": "Abdominal ajoelhado no cabo", "reps": "3x15 (leve)", "sets": 3, "muscle": "Abdômen" },
+                    { "id": "dom_4", "name": "Alongamento: ombros, peito, panturrilhas, lombar", "reps": "10 min", "sets": 1, "muscle": "Mobilidade" }
                 ],
-                "tip": "Recuperação é parte do treino. Respeite esse dia — é aqui que o músculo cresce."
+                "tip": "Domingo: sem intensidade, só movimento leve e alongamento."
             }
         ];
 
@@ -688,7 +718,6 @@
             if (card.classList.contains('expanded')) {
                 card.classList.remove('expanded');
             } else {
-                // Fechar outros cards se quiser (opcional), mas vamos deixar abrir múltiplos
                 card.classList.add('expanded');
             }
         }
@@ -743,6 +772,21 @@
                     if (completedExercises[ex.id]) {
                         completedExercises[ex.id].sets = Array(ex.sets).fill(false);
                     }
+                });
+                saveData();
+                renderContent();
+                updateProgressBar();
+            }
+        }
+
+        function resetWeek() {
+            if(confirm('Tem certeza que deseja zerar TODAS as séries da semana? (Suas anotações de carga não serão perdidas)')) {
+                workoutData.forEach(day => {
+                    day.exercises.forEach(ex => {
+                        if (completedExercises[ex.id]) {
+                            completedExercises[ex.id].sets = Array(ex.sets).fill(false);
+                        }
+                    });
                 });
                 saveData();
                 renderContent();
